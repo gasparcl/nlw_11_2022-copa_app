@@ -1,0 +1,20 @@
+import Fastify from "fastify";
+
+async function bootstrap() {
+  const fastify = Fastify({
+    logger: true,
+  });
+
+  fastify.get("/pools/count", () => {
+    return {
+      count: {
+        quantity: 12342,
+        people: 59,
+      },
+    };
+  });
+
+  await fastify.listen({ port: 3333 });
+}
+
+bootstrap();
