@@ -6,7 +6,7 @@ generator client {
 }
 
 generator erd {
-  provider = "prisma-erd-generator" 
+  provider = "prisma-erd-generator"
 }
 
 datasource db {
@@ -15,8 +15,61 @@ datasource db {
 }
 
 model Pool {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   title     String
-  code      String @unique
+  code      String   @unique
   createdAt DateTime @default(now())
+  ownerId   String?
+
+  participants Participant[]
+  owner        User?         @relation(fields: [ownerId], references: [id])
+}
+
+// Pivotal Table (tabela pivô) - relaciona a tabela Pool com a User
+model Participant {
+  id     String @id @default(cuid())
+  userId String
+  poolId String
+
+  guesses Guess[]
+  user    User    @relation(fields: [userId], references: [id])
+  pool    Pool    @relation(fields: [poolId], references: [id])
+
+  // informações SEMPRE únicas para essa tabela pivô
+  @@unique([userId, poolId])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  // registro único por tabela (@unique)
+  email     String   @unique
+  // String"?" - torna atributo nullable, ou seja, opcional
+  avatarUrl String?
+  createdAt DateTime @default(now())
+
+  participatingAt Participant[]
+  ownedPools      Pool[]
+}
+
+model Game {
+  id                    String   @id @default(cuid())
+  date                  DateTime
+  firstTeamCountryCode  String
+  secondTeamCountryCode String
+
+  guesses Guess[]
+}
+
+model Guess {
+  id               String   @id @default(cuid())
+  firstTeamPoints  Int
+  secondTeamPoints Int
+  createdAt        DateTime @default(now())
+  gameId           String
+  participantId    String
+
+  // para criar o relacionamento, criamos o nome do atributo em minúsculo e na frente o nome do Model em maiúsculo, dessa forma, ele adiciona automaticamente a coluna gameId ao model Guess e as relações guesses ao model Game, e game ao model Guess, sem realizar nenhuma alteração no banco de Dados:
+  game        Game        @relation(fields: [gameId], references: [id])
+  participant Participant @relation(fields: [participantId], references: [id])
 }
