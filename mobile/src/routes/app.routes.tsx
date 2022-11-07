@@ -57,7 +57,7 @@ export function AppRoutes() {
             />
 
             <Screen
-                name="findPoll"
+                name="findPolls"
                 component={FindPoll}
                 options={{
                     tabBarButton: () => null,

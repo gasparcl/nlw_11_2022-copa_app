@@ -1,12 +1,58 @@
-import { Heading, Text, VStack } from "native-base"
+import { useState } from "react"
+import { Heading, Text, VStack, useToast } from "native-base"
+
+import { api } from "../../services/api"
 
 import Logo from "../../assets/logo.svg"
-
 import { Button } from "../../components/Button"
 import { Header } from "../../components/Header"
 import { Input } from "../../components/Input"
 
 export function NewPoll() {
+    // ╦ ╦╔═╗╔═╗╦╔═╔═╗
+    // ╠═╣║ ║║ ║╠╩╗╚═╗
+    // ╩ ╩╚═╝╚═╝╩ ╩╚═╝
+    const [pollName, setPollName] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+
+    const toast = useToast()
+
+    // ╦ ╦╔═╗╔╗╔╔╦╗╦  ╔═╗╦═╗╔═╗
+    // ╠═╣╠═╣║║║ ║║║  ║╣ ╠╦╝╚═╗
+    // ╩ ╩╩ ╩╝╚╝═╩╝╩═╝╚═╝╩╚═╚═╝
+    const handleCreatePoll = async () => {
+        if (!pollName.trim()) {
+            return toast.show({
+                title: "O nome do bolão é obrigatório...",
+                placement: "top",
+                bgColor: "red.500",
+            })
+        }
+
+        try {
+            setIsLoading(true)
+
+            await api.post("/polls", { title: pollName })
+
+            toast.show({
+                title: "Bolão criado com sucesso!",
+                placement: "top",
+                bgColor: "green.500",
+            })
+            setPollName("")
+        } catch (err) {
+            console.log(err)
+
+            toast.show({
+                title: "Não foi possível criar o bolão...",
+                placement: "top",
+                bgColor: "red.500",
+            })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <VStack flex={1} bg="gray.900">
             <Header title="Criar novo bolão" />
@@ -25,9 +71,18 @@ export function NewPoll() {
                     amigos!
                 </Heading>
 
-                <Input mb={2} placeholder="Qual o nome do seu bolão?" />
+                <Input
+                    mb={2}
+                    placeholder="Qual o nome do seu bolão?"
+                    value={pollName}
+                    onChangeText={setPollName}
+                />
 
-                <Button title="Criar meu bolão" />
+                <Button
+                    title="Criar meu bolão"
+                    onPress={handleCreatePoll}
+                    isLoading={isLoading}
+                />
 
                 <Text
                     color="gray.200"
