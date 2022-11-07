@@ -5,16 +5,16 @@ const prisma = new PrismaClient()
 async function main() {
     const user = await prisma.user.create({
         data: {
-            name: "John Doe",
-            email: "john.doe@gmail.com",
+            name: "John Does",
+            email: "john.ddoes112as3@gmail.com",
             avatarUrl: "https://github.com/gasparcl.png",
         },
     })
 
-    const pool = await prisma.pool.create({
+    const poll = await prisma.poll.create({
         data: {
-            title: "Example Pool",
-            code: "BOL123",
+            title: "Example Poll",
+            code: "BOL520",
             ownerId: user.id,
 
             // criações encadeadas (enchaveadas)
@@ -48,9 +48,9 @@ async function main() {
 
                     participant: {
                         connect: {
-                            userId_poolId: {
+                            userId_pollId: {
                                 userId: user.id,
-                                poolId: pool.id,
+                                pollId: poll.id,
                             },
                         },
                     },
