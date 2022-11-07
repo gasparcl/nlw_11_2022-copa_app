@@ -9,9 +9,9 @@ import {
 import AuthContextProvider from "./src/contexts/AuthContext"
 
 import { Loading } from "./src/components/Loading"
-import { SignIn } from "./src/screens/SignIn"
 
 import { THEME } from "./src/styles/theme"
+import { Routes } from "./src/routes"
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -28,7 +28,7 @@ export default function App() {
                     backgroundColor="transparent"
                     translucent
                 />
-                {fontsLoaded ? <SignIn /> : <Loading />}
+                {fontsLoaded ? <Routes /> : <Loading />}
             </AuthContextProvider>
         </NativeBaseProvider>
     )
