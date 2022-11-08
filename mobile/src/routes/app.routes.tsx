@@ -7,6 +7,7 @@ import { Polls } from "../screens/Polls"
 import { FindPoll } from "../screens/FindPoll"
 
 import { THEME } from "../styles/theme"
+import { Details } from "../screens/Details"
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -59,6 +60,14 @@ export function AppRoutes() {
             <Screen
                 name="findPolls"
                 component={FindPoll}
+                options={{
+                    tabBarButton: () => null,
+                }}
+            />
+
+            <Screen
+                name="details"
+                component={Details}
                 options={{
                     tabBarButton: () => null,
                 }}

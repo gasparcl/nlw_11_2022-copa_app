@@ -30,8 +30,9 @@ export default function AuthContextProvider({ children }: AuthProviderProps) {
     const [isUserLoading, setIsUserLoading] = useState(false)
 
     const [request, response, promptAsync] = Google.useAuthRequest({
-        clientId:
-            "319754984878-dvg7pkgh3o1ouc26mhimqd8q4mdk4h75.apps.googleusercontent.com",
+        // O React Native não entende por padrão localizar uma variável de ambiente, portanto é necessário instalar 2 bibliotecas (npm i dotenv babel-plugin-inline-dotenv)
+        // acrescentar ao /root/babel.config.js - abaixo de presets - plugins: ["inline-dotenv"]
+        clientId: process.env.CLIENT_ID,
         redirectUri: AuthSession.makeRedirectUri({ useProxy: true }),
         scopes: ["profile", "email"],
     })
@@ -53,11 +54,12 @@ export default function AuthContextProvider({ children }: AuthProviderProps) {
             setIsUserLoading(true)
 
             const tokenResponse = await api.post("users", { access_token })
-            api.defaults.headers.common["Authorization"] = `Bearer ${tokenResponse.data.token}`
+            api.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${tokenResponse.data.token}`
 
             const userInfoResponse = await api.get("/me")
             setUser(userInfoResponse.data.user)
-            
         } catch (err) {
             console.log(err)
             throw err

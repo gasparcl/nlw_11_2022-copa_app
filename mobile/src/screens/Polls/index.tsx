@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { VStack, Icon, useToast, FlatList } from "native-base"
 import { Octicons } from "@expo/vector-icons"
-import { useNavigation } from "@react-navigation/native"
+import { useFocusEffect, useNavigation } from "@react-navigation/native"
 
 import { api } from "../../services/api"
 
@@ -21,28 +21,31 @@ export function Polls() {
     const { navigate } = useNavigation()
     const toast = useToast()
 
-    useEffect(() => {
-        const fetchPolls = async () => {
-            try {
-                const response = await api.get("/polls")
-                const pollsData = response.data.polls
+    // TEMP - TESTAR PARA VER SE FUNCIONA APENAS UTILIZANDO O USE EFFECT COM O ESTADO DE POLLS COMO DEPENDENCIA ****
+    useFocusEffect(
+        useCallback(() => {
+            const fetchPolls = async () => {
+                try {
+                    const response = await api.get("/polls")
+                    const pollsData = response.data.polls
 
-                setPolls(pollsData)
-            } catch (err) {
-                console.log(err)
+                    setPolls(pollsData)
+                } catch (err) {
+                    console.log(err)
 
-                toast.show({
-                    title: "Não foi possível carregar os bolões...",
-                    bgColor: "red.500",
-                    placement: "top",
-                })
-            } finally {
-                setIsLoading(false)
+                    toast.show({
+                        title: "Não foi possível carregar os bolões...",
+                        bgColor: "red.500",
+                        placement: "top",
+                    })
+                } finally {
+                    setIsLoading(false)
+                }
             }
-        }
 
-        fetchPolls()
-    }, [])
+            fetchPolls()
+        }, [polls])
+    )
 
     return (
         <VStack flex={1} bgColor="gray.900">
@@ -76,10 +79,15 @@ export function Polls() {
                 <FlatList
                     data={polls}
                     keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => <PollCard data={item} />}
-                    px={5}
                     showsVerticalScrollIndicator={false}
                     _contentContainerStyle={{ pb: 10 }}
+                    px={5}
+                    renderItem={({ item }) => (
+                        <PollCard
+                            data={item}
+                            onPress={() => navigate("details", { id: item.id })}
+                        />
+                    )}
                     ListEmptyComponent={() => <EmptyPollList />}
                 />
             )}

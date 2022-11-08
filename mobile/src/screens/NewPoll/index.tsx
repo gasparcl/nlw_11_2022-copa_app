@@ -32,7 +32,7 @@ export function NewPoll() {
         try {
             setIsLoading(true)
 
-            await api.post("/polls", { title: pollName })
+            await api.post("/polls", { title: pollName.toUpperCase() })
 
             toast.show({
                 title: "Bolão criado com sucesso!",
